@@ -544,6 +544,8 @@ drawProfessionalFlow();drawFactoryDetails();drawFactoryArchitecture();drawExpans
 obstacles.forEach(o=>{ctx.fillStyle='#94a3b833';ctx.fillRect(o.x,o.y,o.w,o.h);ctx.strokeStyle='#334155';ctx.lineWidth=8;ctx.strokeRect(o.x,o.y,o.w,o.h);ctx.strokeStyle='#cbd5e1';ctx.lineWidth=2;ctx.strokeRect(o.x+8,o.y+8,o.w-16,o.h-16);ctx.fillStyle='#64748b';ctx.font='bold 11px Arial';ctx.fillText(o.label,o.x+14,o.y+22)});
 // máy móc, băng tải và vật tư theo dây chuyền thẳng
 ctx.save();
+ctx.strokeStyle='#475569';ctx.lineWidth=16;ctx.beginPath();ctx.moveTo(145,450);ctx.lineTo(1580,450);ctx.stroke();
+ctx.strokeStyle='#94a3b8';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(145,450);ctx.lineTo(1580,450);ctx.stroke();
 const rr=[
 {x:250,y:450,tx:270,y:450},{x:480,y:450,tx:500,y:450},{x:710,y:450,tx:730,y:450},
 {x:940,y:450,tx:960,y:450},{x:1170,y:450,tx:1190,y:450},{x:1400,y:450,tx:1420,y:450}
