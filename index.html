@@ -76,16 +76,24 @@
 <div id="miniMap"><canvas id="miniCanvas" width="380" height="232"></canvas></div>
 <div id="zoomUI"><button class="zoomBtn" onclick="changeZoom(-0.1)">−</button><span class="zoomVal" id="zoomVal">100%</span><button class="zoomBtn" onclick="changeZoom(0.1)">+</button><button class="zoomBtn" onclick="resetZoom()">⌖</button></div><div class="moveHint">🚶 WASD / ←↑↓→ &nbsp; ⚡ Shift: chạy</div><div class="panel" style="right:12px;bottom:48px;max-width:420px;font-size:11px">🏭 <b>DÂY CHUYỀN</b> · Tuấn: <span id="ambientOut">0</span> lượt · Lan QC: <span id="ambientQc">0</span> · Phúc xuất: <span id="ambientShip">0</span></div><div class="touch"><div class="row"><button data-key="w">▲</button></div><div class="row"><button data-key="a">◀</button><button data-key="s">▼</button><button data-key="d">▶</button></div></div>
 <div id="eventPanel"></div><div id="toast" class="toast"></div><div id="managerPanel" class="modal"><div class="card"><h2>🖥️ TRUNG TÂM ĐIỀU HÀNH XƯỞNG <button onclick="openMulti()" style="font-size:11px;padding:6px 9px">🌐 ONLINE</button></h2><p class="small">Bảng điều hành được gom theo <b>Vấn đề → Hành động → Kết quả</b>, tránh chồng thông tin.</p><div id="mgrAndonBox" class="v39Alert v39Good">🟢 ANDON: Hệ thống đang ổn định.</div><div class="mgrGrid"><div class="mgrBox"><b>📊 SẢN XUẤT THỰC</b><div class="small" id="mgrProduction">Đang tải...</div></div><div class="mgrBox"><b>🔧 LINE A</b><div class="small" id="mgrA">RUN</div><button onclick="toggleLine('A')">BẬT / DỪNG</button></div><div class="mgrBox"><b>⚙️ LINE B</b><div class="small" id="mgrB">RUN</div><button onclick="toggleLine('B')">BẬT / DỪNG</button></div><div class="mgrBox"><b>🧪 QC</b><div class="small" id="mgrQC">AUTO</div><button onclick="toggleQC()">AUTO / ƯU TIÊN</button></div><div class="mgrBox"><b>🚚 KHO VẬN</b><div class="small" id="mgrShip">READY</div><button onclick="dispatchShip()">ĐIỀU PHỐI XUẤT</button></div><div class="mgrBox"><b>🏗️ MỞ RỘNG XƯỞNG</b><div class="small" id="mgrExpansion">Cấp 0 · Công suất 10</div><button onclick="expandFactory()">MỞ RỘNG</button></div><div class="mgrBox"><b>📊 KPI SẢN XUẤT</b><div class="small" id="mgrKpi">Takt -- · OEE -- · Bottleneck --</div><button onclick="openProductionBoard()">DASHBOARD</button><button class="alt" onclick="openLayoutBoard()">🗺️ LOGISTICS</button></div><div class="mgrBox"><b>📋 ĐƠN HÀNG</b><div class="small" id="mgrContract">Chưa chọn đơn</div><button onclick="openContracts()">XEM ĐƠN HÀNG</button></div><div class="mgrBox"><b>👷 NHÂN SỰ</b><div class="small" id="mgrWorkers">5 người · AI hỗ trợ</div><button onclick="hireWorker()">TUYỂN THÊM</button></div><div class="mgrBox"><b>🔬 NGHIÊN CỨU</b><div class="small" id="mgrResearch">Tự động hóa Lv.0</div><button onclick="researchUpgrade()">NÂNG CẤP</button></div></div><p id="mgrAdvice" class="small"></p><button class="alt" onclick="closeManager()">ĐÓNG</button></div></div>
-<div id="multiPanel" class="modal"><div class="card"><h2>🌐 XƯỞNG ONLINE</h2><p class="small">Bạn là <b>QUẢN LÝ XƯỞNG</b> khi chơi một mình. Khi mở phòng, các người chơi khác có thể vào và nhận từng công đoạn.</p><button onclick="createFactoryRoom()">🏭 TẠO PHÒNG</button><button class="alt" onclick="closeMulti()">ĐÓNG</button><div id="roomCreate" style="display:none;margin-top:12px"><p>🔑 Mã phòng: <b id="roomCode">...</b></p><button onclick="copyRoomCode()">📋 SAO CHÉP MÃ</button></div><hr style="border-color:#334155"><div style="margin-top:12px"><input id="joinCode" placeholder="Nhập mã phòng" style="padding:10px;border-radius:8px;border:1px solid #475569;background:#111827;color:#fff;width:190px"><select id="joinRole" style="padding:10px;border-radius:8px;background:#111827;color:#fff;border:1px solid #475569"><option value="warehouse">Kho nguyên liệu</option><option value="lineA">Line A</option><option value="lineB">Line B</option><option value="qc">QC</option><option value="pack">Đóng gói</option><option value="ship">Kho vận</option></select><button onclick="joinFactoryRoom()">👷 VÀO XƯỞNG</button></div><div id="onlineList" class="small" style="margin-top:14px;text-align:left"></div></div></div><div id="contractPanel" class="modal"><div class="card"><h2>📋 SỔ ĐƠN HÀNG</h2><p class="small">Quản lý chọn một hợp đồng cho ca. Đơn hàng ảnh hưởng mục tiêu, thưởng và độ khó.</p><div id="contractList" style="text-align:left"></div><button class="alt" onclick="closeContracts()">ĐÓNG</button></div></div><div id="productionBoard" class="modal"><div class="card"><h2>📊 DASHBOARD ĐIỀU HÀNH</h2><div id="prodBoardBody" style="text-align:left"></div><button class="alt" onclick="closeProductionBoard()">ĐÓNG</button></div></div><div id="layoutBoard" class="modal"><div class="card"><h2>🗺️ BẢN ĐỒ LOGISTICS & DÒNG VẬT TƯ</h2><p class="small">Theo dõi khoảng cách, WIP và điểm nghẽn. Bấm ĐÓNG để quay lại xưởng.</p><div class="layoutLegend"><span class="layoutChip">🟢 Luồng tốt</span><span class="layoutChip">🟡 Cần chú ý</span><span class="layoutChip">🔴 Điểm nghẽn</span><span class="layoutChip">🚜 Xe nâng</span></div><div id="layoutBody"></div><button class="alt" onclick="closeLayoutBoard()">ĐÓNG</button></div></div><div id="overlay" class="overlay"><div class="card"><h1>🏭 CÔNG NHÂN NHÀ MÁY</h1><p>Phiên bản <b>3.9</b> — Takt · OEE · Bottleneck · Andon</p><p class="small">Lắp ráp 1 → Lắp ráp 2 → QC → Kho thành phẩm → Đóng gói → Kho vận</p><button id="startShiftBtn">BẮT ĐẦU CA</button><button class="alt" onclick="load()">TẢI DỮ LIỆU</button></div></div>
+<div id="multiPanel" class="modal"><div class="card"><h2>🌐 XƯỞNG ONLINE</h2><p class="small">Bạn là <b>QUẢN LÝ XƯỞNG</b> khi chơi một mình. Khi mở phòng, các người chơi khác có thể vào và nhận từng công đoạn.</p><button onclick="createFactoryRoom()">🏭 TẠO PHÒNG</button><button class="alt" onclick="closeMulti()">ĐÓNG</button><div id="roomCreate" style="display:none;margin-top:12px"><p>🔑 Mã phòng: <b id="roomCode">...</b></p><button onclick="copyRoomCode()">📋 SAO CHÉP MÃ</button></div><hr style="border-color:#334155"><div style="margin-top:12px"><input id="joinCode" placeholder="Nhập mã phòng" style="padding:10px;border-radius:8px;border:1px solid #475569;background:#111827;color:#fff;width:190px"><select id="joinRole" style="padding:10px;border-radius:8px;background:#111827;color:#fff;border:1px solid #475569"><option value="warehouse">Kho nguyên liệu</option><option value="lineA">Line A</option><option value="lineB">Line B</option><option value="qc">QC</option><option value="pack">Đóng gói</option><option value="ship">Kho vận</option></select><button onclick="joinFactoryRoom()">👷 VÀO XƯỞNG</button></div><div id="onlineList" class="small" style="margin-top:14px;text-align:left"></div></div></div><div id="contractPanel" class="modal"><div class="card"><h2>📋 SỔ ĐƠN HÀNG</h2><p class="small">Quản lý chọn một hợp đồng cho ca. Đơn hàng ảnh hưởng mục tiêu, thưởng và độ khó.</p><div id="contractList" style="text-align:left"></div><button class="alt" onclick="closeContracts()">ĐÓNG</button></div></div><div id="productionBoard" class="modal"><div class="card"><h2>📊 DASHBOARD ĐIỀU HÀNH</h2><div id="prodBoardBody" style="text-align:left"></div><button class="alt" onclick="closeProductionBoard()">ĐÓNG</button></div></div><div id="layoutBoard" class="modal"><div class="card"><h2>🗺️ BẢN ĐỒ LOGISTICS & DÒNG VẬT TƯ</h2><p class="small">Theo dõi khoảng cách, WIP và điểm nghẽn. Bấm ĐÓNG để quay lại xưởng.</p><div class="layoutLegend"><span class="layoutChip">🟢 Luồng tốt</span><span class="layoutChip">🟡 Cần chú ý</span><span class="layoutChip">🔴 Điểm nghẽn</span><span class="layoutChip">🚜 Xe nâng</span></div><div id="layoutBody"></div><button class="alt" onclick="closeLayoutBoard()">ĐÓNG</button></div></div><div id="overlay" class="overlay"><div class="card"><h1>🏭 CÔNG NHÂN NHÀ MÁY</h1><p>Phiên bản <b>4.0</b> — Takt · OEE · Bottleneck · Andon</p><p class="small">Lắp ráp 1 → Lắp ráp 2 → QC → Kho thành phẩm → Đóng gói → Kho vận</p><button id="startShiftBtn">BẮT ĐẦU CA</button><button class="alt" onclick="load()">TẢI DỮ LIỆU</button></div></div>
 <div id="workModal" class="modal"><div class="card"><h2 id="workTitle">🔧 TRẠM THAO TÁC</h2><p id="workDesc"></p><div id="workProgress"><div id="workFill"></div></div><div class="workKeys"><span class="workKey" id="keyA">A</span><span class="workKey" id="keyD">D</span><span class="workKey" id="keyW">W</span><span class="workKey" id="keyS">S</span></div><div class="workResult" id="workResult">Nhấn phím theo hướng dẫn.</div><button class="alt" onclick="closeWork()">HỦY</button></div></div><div id="modal" class="modal"><div id="modalCard" class="card"></div></div>
 <script>
 'use strict';
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
 let W=innerWidth,H=innerHeight-86;let VIEW_W=W,VIEW_H=H;const WORLD={w:1800,h:1100};let cam={x:0,y:0};let zoom=1;const ZMIN=.55,ZMAX=1.8;
 const zones={
-machine:{x:760,y:40,w:235,h:105},raw:{x:70,y:140,w:235,h:125},a1:{x:735,y:350,w:235,h:135},a2:{x:735,y:520,w:235,h:135},
-qc:{x:1400,y:140,w:235,h:125},finished:{x:1400,y:350,w:235,h:135},pack:{x:1400,y:520,w:235,h:135},
-ship:{x:70,y:875,w:235,h:105},break:{x:735,y:850,w:235,h:105},canteen:{x:1400,y:850,w:235,h:105},office:{x:1400,y:700,w:235,h:105}
+raw:{x:40,y:260,w:210,h:360},
+a1:{x:270,y:260,w:210,h:360},
+a2:{x:500,y:260,w:210,h:360},
+qc:{x:730,y:260,w:210,h:360},
+finished:{x:960,y:260,w:210,h:360},
+pack:{x:1190,y:260,w:210,h:360},
+ship:{x:1420,y:260,w:320,h:360},
+machine:{x:40,y:760,w:250,h:210},
+office:{x:320,y:760,w:250,h:210},
+break:{x:600,y:760,w:250,h:210},
+canteen:{x:880,y:760,w:250,h:210}
 };
 function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight-86;VIEW_W=W/zoom;VIEW_H=H/zoom}
 function updateZoomUI(){document.getElementById('zoomVal').textContent=Math.round(zoom*100)+'%'}
@@ -125,27 +133,31 @@ function updateQuests(){for(const q of quests){if(!q.done&&questProgress(q)>=q.t
 const walls=[{x:28,y:28,w:W-56,h:22},{x:28,y:H-50,w:W-56,h:22},{x:28,y:28,w:22,h:H-56},{x:W-50,y:28,w:22,h:H-56}];
 function refreshWalls(){walls[0].x=28;walls[0].y=28;walls[0].w=WORLD.w-56;walls[1].x=28;walls[1].y=WORLD.h-50;walls[1].w=WORLD.w-56;walls[2].x=28;walls[2].y=28;walls[2].w=22;walls[2].h=WORLD.h-56;walls[3].x=WORLD.w-50;walls[3].y=28;walls[3].w=22;walls[3].h=WORLD.h-56}
 const doors=[
-{x:485,y:235,w:60,h:24,label:'Cửa kho'},
-{x:820,y:235,w:60,h:24,label:'Cửa máy A'},
-{x:1180,y:235,w:60,h:24,label:'Cửa máy B'},
-{x:485,y:455,w:60,h:24,label:'Cửa kho phụ'},
-{x:820,y:475,w:60,h:24,label:'Cửa dây chuyền'},
-{x:1180,y:475,w:60,h:24,label:'Cửa dây chuyền'},
-{x:485,y:740,w:60,h:24,label:'Cửa kỹ thuật'},
-{x:820,y:760,w:60,h:24,label:'Cửa line 3'},
-{x:1180,y:760,w:60,h:24,label:'Cửa đóng gói'}
+{x:115,y:620,w:60,h:24,label:'Cửa Kho'},
+{x:345,y:620,w:60,h:24,label:'Cửa Line A'},
+{x:575,y:620,w:60,h:24,label:'Cửa Line B'},
+{x:805,y:620,w:60,h:24,label:'Cửa QC'},
+{x:1035,y:620,w:60,h:24,label:'Cửa Kho thành phẩm'},
+{x:1265,y:620,w:60,h:24,label:'Cửa Đóng gói'},
+{x:1545,y:620,w:70,h:24,label:'Cửa Kho vận'},
+{x:135,y:760,w:60,h:24,label:'Cửa Bảo trì'},
+{x:415,y:760,w:60,h:24,label:'Cửa Văn phòng'},
+{x:695,y:760,w:60,h:24,label:'Cửa Phòng nghỉ'},
+{x:975,y:760,w:60,h:24,label:'Cửa Căng tin'}
 ];
 doors.forEach(d=>d.open=false);
 const obstacles=[
-{x:390,y:130,w:250,h:110,label:'Kho lạnh'},
-{x:700,y:130,w:300,h:110,label:'Khu máy A'},
-{x:1060,y:130,w:300,h:110,label:'Khu máy B'},
-{x:390,y:330,w:250,h:150,label:'Kho phụ'},
-{x:700,y:330,w:300,h:150,label:'Dây chuyền 1'},
-{x:1060,y:330,w:300,h:150,label:'Dây chuyền 2'},
-{x:390,y:620,w:250,h:140,label:'Phòng kỹ thuật'},
-{x:700,y:620,w:300,h:140,label:'Dây chuyền 3'},
-{x:1060,y:620,w:300,h:140,label:'Khu đóng gói'}
+{x:40,y:260,w:210,h:360,label:'01 · KHO NGUYÊN LIỆU'},
+{x:270,y:260,w:210,h:360,label:'02 · LINE A · LẮP RÁP'},
+{x:500,y:260,w:210,h:360,label:'03 · LINE B · HOÀN THIỆN'},
+{x:730,y:260,w:210,h:360,label:'04 · QC · KIỂM TRA'},
+{x:960,y:260,w:210,h:360,label:'05 · KHO THÀNH PHẨM'},
+{x:1190,y:260,w:210,h:360,label:'06 · ĐÓNG GÓI'},
+{x:1420,y:260,w:320,h:360,label:'07 · KHO VẬN · XUẤT'},
+{x:40,y:760,w:250,h:210,label:'BẢO TRÌ'},
+{x:320,y:760,w:250,h:210,label:'VĂN PHÒNG'},
+{x:600,y:760,w:250,h:210,label:'PHÒNG NGHỈ'},
+{x:880,y:760,w:250,h:210,label:'CĂNG TIN'}
 ];
 function inRect(x,y,z,r=0){return x+r>z.x&&x-r<z.x+z.w&&y+r>z.y&&y-r<z.y+z.h}
 function blocked(x,y){const r=p.r+2;for(const z of walls)if(inRect(x,y,z,r))return true;for(const z of obstacles)if(inRect(x,y,z,r)){let inDoor=false;for(const d of doors)if(!d.open&&inRect(x,y,{x:d.x,y:d.y,w:d.w,h:d.h},r+6))inDoor=true;if(!inDoor)return true}return false}
@@ -166,22 +178,22 @@ const npcs=[
 {name:'Vy',role:'Đóng gói',x:0,y:0,rel:0,color:'#fb7185',type:'pack'},
 {name:'Dũng',role:'Kỹ thuật bảo trì',x:0,y:0,rel:0,color:'#f97316',type:'tech'}
 ];
-function repositionNPC(){const pos=[[1515,745],[1515,205],[650,418],[350,200],[300,925],[900,587],[1515,587],[850,90]];npcs.forEach((n,i)=>{n.x=pos[i][0];n.y=pos[i][1]})}
+function repositionNPC(){const pos=[[360,790],[825,420],[375,420],[145,420],[1580,420],[605,420],[1295,420],[165,840]];npcs.forEach((n,i)=>{n.x=pos[i][0];n.y=pos[i][1]})}
 const npcPaths=[
-[{x:1515,y:745},{x:1450,y:745},{x:1515,y:700}],
-[{x:1515,y:205},{x:1515,y:260},{x:1515,y:205}],
-[{x:650,y:418},{x:690,y:418},{x:650,y:445}],
-[{x:350,y:200},{x:350,y:280},{x:300,y:280}],
-[{x:300,y:925},{x:360,y:925},{x:300,y:875}],
-[{x:900,y:587},{x:940,y:587},{x:900,y:620}],
-[{x:1515,y:587},{x:1570,y:587},{x:1515,y:620}],
-[{x:850,y:90},{x:900,y:90},{x:850,y:120}]
+[{x:360,y:790},{x:430,y:790},{x:360,y:840}],
+[{x:825,y:390},{x:825,y:500},{x:790,y:500}],
+[{x:375,y:390},{x:375,y:500},{x:430,y:500}],
+[{x:145,y:390},{x:145,y:500},{x:200,y:500}],
+[{x:1580,y:390},{x:1580,y:500},{x:1680,y:500}],
+[{x:605,y:390},{x:605,y:500},{x:675,y:500}],
+[{x:1295,y:390},{x:1295,y:500},{x:1360,y:500}],
+[{x:165,y:810},{x:165,y:910},{x:235,y:910}]
 ];
 const npcState=npcs.map((n,i)=>({idx:0,t:0,speed:0.7+Math.random()*.35,path:npcPaths[i],state:'Làm việc',work:0,action:0,station:i===0?'management':i===1?'qc':i===2?'a1':i===3?'raw':i===4?'ship':i===5?'a2':i===6?'pack':'maintenance'}));
 let botFactory={raw:0,a1:0,a2:0,qc:0,pack:0,ship:0,defects:0,completed:0,timers:{raw:0,a1:0,a2:0,qc:0,pack:0,ship:0}};
 let lineMetrics={A:{ct:8,produced:0,downtime:0,active:0},B:{ct:9,produced:0,downtime:0,active:0},QC:{ct:8,produced:0,downtime:0,active:0},PACK:{ct:7,produced:0,downtime:0,active:0},SHIP:{ct:8,produced:0,downtime:0,active:0}};
 let andon={active:false,line:'',reason:'',since:0};
-let factoryLayout={compact:true};
+let factoryLayout={compact:false,straight:true,rooms:true};
 
 let factoryPulse=0,ambientOutput=0,ambientQC=0,ambientShip=0;
 let factoryEvent=null,eventCooldown=18,eventClock=18,eventId=0;
@@ -449,54 +461,100 @@ function load(){const s=localStorage.getItem('factorySave06')||localStorage.getI
 function box(z,title,sub,fill){ctx.fillStyle=fill;ctx.fillRect(z.x,z.y,z.w,z.h);ctx.fillStyle='#0f172a';ctx.font='bold 16px Arial';ctx.fillText(title,z.x+13,z.y+31);ctx.font='11px Arial';ctx.fillText(sub,z.x+13,z.y+57)}
 function drawWorkerSprite(x,y,o){ctx.save();ctx.translate(x,y);const t=performance.now()/120,step=o.moving?Math.sin(t)*4:0,arm=o.moving?Math.sin(t)*7:0;ctx.fillStyle='#0f172a33';ctx.beginPath();ctx.ellipse(0,22,18,6,0,0,Math.PI*2);ctx.fill();if(o.moving){ctx.globalAlpha=.2;ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.ellipse(0,29,13+Math.abs(step)*.7,3,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}ctx.fillStyle='#334155';ctx.fillRect(-10,18+step,8,13);ctx.fillRect(2,18-step,8,13);ctx.fillStyle=o.color||'#2563eb';ctx.fillRect(-13,-4,26,24);ctx.fillStyle='#f8fafc';ctx.fillRect(-7,1,14,7);ctx.fillStyle='#f2c6a0';ctx.beginPath();ctx.arc(0,-15,11,0,Math.PI*2);ctx.fill();ctx.fillStyle='#172033';ctx.beginPath();ctx.arc(0,-18,11,Math.PI,Math.PI*2);ctx.fill();ctx.fillStyle=o.helmet||'#facc15';ctx.beginPath();ctx.arc(0,-24,14,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(-15,-24,30,4);ctx.fillStyle='#111827';ctx.fillRect(-5,-16,2,2);ctx.fillRect(3,-16,2,2);ctx.strokeStyle='#f2c6a0';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-12,0);ctx.lineTo(-20,arm);ctx.moveTo(12,0);ctx.lineTo(20,-arm);ctx.stroke();if(o.tool){ctx.strokeStyle='#64748b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(20,-arm);ctx.lineTo(27,-arm-6);ctx.stroke()}ctx.fillStyle='#fff';ctx.font='bold 10px Arial';ctx.textAlign='center';ctx.fillText(o.name,0,47);ctx.restore()}function npcDraw(n){const i=npcs.indexOf(n),s=npcState[i];drawWorkerSprite(n.x,n.y,{name:n.name,color:n.color,helmet:i===0?'#f59e0b':i===1?'#ec4899':i===2?'#22c55e':i===3?'#a78bfa':'#38bdf8',moving:!!s.action});ctx.save();ctx.translate(n.x,n.y);ctx.fillStyle='#0f172a';ctx.font='9px Arial';ctx.textAlign='center';ctx.fillText(n.role,0,-39);if(isWorkingState(s.state)){ctx.strokeStyle='#22c55e88';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,-8,28+Math.sin(s.work*8)*3,0,Math.PI*2);ctx.stroke()}if(nearNPC(n)){ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(0,-50,11,0,Math.PI*2);ctx.fill();ctx.fillStyle='#111827';ctx.font='bold 12px Arial';ctx.fillText('E',0,-46)}ctx.restore()}function drawMachine(x,y,w,h,label,on=true){ctx.save();const t=performance.now()/180;ctx.fillStyle='#1e293b';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#0f172a';ctx.lineWidth=5;ctx.strokeRect(x,y,w,h);ctx.fillStyle='#334155';ctx.fillRect(x+10,y+10,w-20,h-20);ctx.fillStyle='#0f172a';ctx.fillRect(x+18,y+18,w-36,28);ctx.fillStyle=on?'#22c55e':'#ef4444';ctx.fillRect(x+25,y+24,9,9);ctx.fillStyle='#e2e8f0';ctx.font='bold 9px Arial';ctx.fillText(label,x+40,y+32);for(let i=0;i<3;i++){ctx.fillStyle=i%2?'#64748b':'#94a3b8';ctx.fillRect(x+18+i*(w-60)/2,y+h-38,30,16)}ctx.fillStyle='#0f172a';ctx.fillRect(x+w-48,y+18,30,28);ctx.fillStyle=on?'#22c55e':'#ef4444';ctx.beginPath();ctx.arc(x+w-33,y+32,5+Math.sin(t)*1.2,0,Math.PI*2);ctx.fill();if(on){ctx.strokeStyle='#60a5fa88';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+22,y+h-15);ctx.lineTo(x+w-22,y+h-15);ctx.stroke();ctx.fillStyle='#94a3b8';ctx.fillRect(x+30+(Math.sin(t)*.5+.5)*(w-70),y+h-17,18,4)}ctx.restore()}function drawConveyor(x,y,w,h){ctx.save();const shift=(performance.now()/55)%28;ctx.fillStyle='#334155';ctx.fillRect(x,y,w,h);for(let i=x+10-shift;i<x+w;i+=28){ctx.fillStyle='#94a3b8';ctx.beginPath();ctx.arc(i,y+h/2,7,0,Math.PI*2);ctx.fill()}ctx.strokeStyle='#111827';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y+3);ctx.lineTo(x+w,y+3);ctx.moveTo(x,y+h-3);ctx.lineTo(x+w,y+h-3);ctx.stroke();ctx.restore()}function drawProfessionalFlow(){
  ctx.save();
- const stations=[
-  {x:185,y:155,n:'01',t:'KHO NGUYÊN LIỆU',c:'#a78bfa'},
-  {x:650,y:355,n:'02',t:'LINE A · LẮP RÁP',c:'#22c55e'},
-  {x:650,y:525,n:'03',t:'LINE B · HOÀN THIỆN',c:'#14b8a6'},
-  {x:1515,y:145,n:'04',t:'QC · KIỂM TRA',c:'#ec4899'},
-  {x:1515,y:525,n:'05',t:'ĐÓNG GÓI',c:'#fb7185'},
-  {x:185,y:875,n:'06',t:'KHO VẬN · XUẤT',c:'#38bdf8'}
+ const rooms=[
+  {x:145,y:440,n:'01',t:'KHO',c:'#a78bfa'},
+  {x:375,y:440,n:'02',t:'LINE A',c:'#22c55e'},
+  {x:605,y:440,n:'03',t:'LINE B',c:'#14b8a6'},
+  {x:835,y:440,n:'04',t:'QC',c:'#ec4899'},
+  {x:1065,y:440,n:'05',t:'THÀNH PHẨM',c:'#f59e0b'},
+  {x:1295,y:440,n:'06',t:'ĐÓNG GÓI',c:'#fb7185'},
+  {x:1580,y:440,n:'07',t:'KHO VẬN',c:'#38bdf8'}
  ];
- ctx.font='bold 11px Arial';ctx.textAlign='left';
- stations.forEach(s=>{ctx.fillStyle=s.c;ctx.beginPath();ctx.arc(s.x,s.y,16,0,Math.PI*2);ctx.fill();ctx.fillStyle='#0f172a';ctx.textAlign='center';ctx.fillText(s.n,s.x,s.y+4);ctx.textAlign='left';ctx.fillStyle='#f8fafc';ctx.fillText(s.t,s.x+24,s.y+4)});
- const arrows=[[[305,202],[735,418]],[[970,418],[735,587]],[[970,587],[1400,202]],[[1635,202],[1635,418]],[[1635,587],[305,927]]];
- ctx.strokeStyle='#22c55e99';ctx.lineWidth=3;ctx.setLineDash([12,8]);
- arrows.forEach(a=>{ctx.beginPath();ctx.moveTo(a[0][0],a[0][1]);ctx.lineTo(a[1][0],a[1][1]);ctx.stroke()});
- ctx.setLineDash([]);
- ctx.fillStyle='#0f172acc';ctx.fillRect(40,1020,1720,32);ctx.fillStyle='#e2e8f0';ctx.font='bold 12px Arial';ctx.fillText('PRODUCTION FLOW  ·  KHO → A1 → A2 → QC → ĐÓNG GÓI → XUẤT HÀNG',60,1042);
+ ctx.font='bold 11px Arial';ctx.textAlign='center';
+ ctx.fillStyle='#334155';ctx.fillRect(80,195,1660,38);
+ ctx.fillStyle='#e2e8f0';ctx.font='bold 14px Arial';ctx.fillText('DÂY CHUYỀN SẢN XUẤT CHÍNH  ·  FLOW TRÁI → PHẢI',910,218);
+ ctx.strokeStyle='#0f172a55';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(145,450);ctx.lineTo(1580,450);ctx.stroke();
+ rooms.forEach((s,i)=>{
+   ctx.fillStyle=s.c;ctx.beginPath();ctx.arc(s.x,s.y,16,0,Math.PI*2);ctx.fill();
+   ctx.fillStyle='#0f172a';ctx.font='bold 10px Arial';ctx.fillText(s.n,s.x,s.y+4);
+   ctx.fillStyle='#f8fafc';ctx.font='bold 11px Arial';ctx.fillText(s.t,s.x,s.y+42);
+   if(i<rooms.length-1){ctx.fillStyle='#0f172a';ctx.beginPath();ctx.moveTo(s.x+25,450);ctx.lineTo(rooms[i+1].x-25,450);ctx.lineTo(rooms[i+1].x-33,444);ctx.moveTo(rooms[i+1].x-25,450);ctx.lineTo(rooms[i+1].x-33,456);ctx.fill()}
+ });
+ ctx.textAlign='left';
+ ctx.fillStyle='#0f172acc';ctx.fillRect(40,1015,1720,38);ctx.fillStyle='#e2e8f0';ctx.font='bold 12px Arial';ctx.fillText('KHO → LINE A → LINE B → QC → THÀNH PHẨM → ĐÓNG GÓI → KHO VẬN',65,1040);
  ctx.restore();
 }
-function drawFactoryDetails(){ctx.save();ctx.globalAlpha=.85;ctx.lineWidth=10;ctx.strokeStyle='#64748b';const lanes=[[[305,202],[700,202],[700,418],[735,418]],[[970,418],[1060,418],[1060,202],[1400,202]],[[1518,270],[1518,350]],[[1518,485],[1518,520]],[[1400,585],[1260,585],[1260,820],[900,820],[900,927],[315,927]]];for(const path of lanes){ctx.beginPath();ctx.moveTo(path[0][0],path[0][1]);for(let i=1;i<path.length;i++)ctx.lineTo(path[i][0],path[i][1]);ctx.stroke()}ctx.lineWidth=2;ctx.strokeStyle='#facc15';for(let x=65;x<WORLD.w-65;x+=70){ctx.beginPath();ctx.moveTo(x,1050);ctx.lineTo(x+30,1050);ctx.stroke()}for(const [x,y] of [[670,200],[1025,418],[1360,202],[1360,585],[650,927]]){ctx.fillStyle='#0f172a';ctx.fillRect(x,y,28,28);ctx.fillStyle='#facc15';ctx.beginPath();ctx.arc(x+14,y+14,6,0,Math.PI*2);ctx.fill()}for(const [x,y] of [[675,275],[1025,275],[1365,275],[675,775],[1025,775],[1365,775]]){ctx.fillStyle='#f8fafc22';ctx.fillRect(x,y,12,70);ctx.fillStyle='#facc15';ctx.fillRect(x+2,y+10,8,12);ctx.fillStyle='#ef4444';ctx.fillRect(x+2,y+29,8,12);ctx.fillStyle='#22c55e';ctx.fillRect(x+2,y+48,8,12)}ctx.restore()}function drawExpansionDetails(){
- if(factoryLevel<1)return;
+function drawFactoryDetails(){
  ctx.save();
- if(factoryLevel>=1){
-  ctx.fillStyle='#cbd5e1';ctx.fillRect(1810,95,360,1010);ctx.fillStyle='#94a3b8';ctx.fillRect(1810,95,8,1010);
-  ctx.fillStyle='#facc15';ctx.fillRect(1828,290,320,12);ctx.fillStyle='#111827';ctx.font='bold 10px Arial';for(let x=1830;x<2140;x+=24)ctx.fillText('⚠',x,301);
-  ctx.fillStyle='#475569';ctx.fillRect(1830,805,330,8);ctx.fillStyle='#64748b';ctx.fillRect(1850,820,290,4);
-  for(let x=1850;x<2120;x+=55){ctx.strokeStyle='#eab308';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,990);ctx.lineTo(x+35,990);ctx.stroke()}
-  ctx.fillStyle='#334155';ctx.font='bold 18px Arial';ctx.fillText('🏗️ KHU XƯỞNG MỞ RỘNG',1840,112);
+ // Straight conveyor spine connecting every room.
+ const centers=[145,375,605,835,1065,1295,1580];
+ ctx.strokeStyle='#475569';ctx.lineWidth=16;ctx.beginPath();ctx.moveTo(145,450);ctx.lineTo(1580,450);ctx.stroke();
+ ctx.strokeStyle='#94a3b8';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(145,450);ctx.lineTo(1580,450);ctx.stroke();
+ centers.forEach((x,i)=>{ctx.fillStyle='#facc15';ctx.fillRect(x-22,438,44,24);ctx.fillStyle='#111827';for(let r=x-15;r<x+16;r+=15)ctx.fillRect(r,444,7,12)});
+ // Machines/workstations inside each room.
+ drawMachine(305,350,62,72,'PRESS A',machine.status!=='broken');
+ drawMachine(395,350,62,72,'ROBOT A',machine.status!=='broken');
+ drawMachine(535,350,62,72,'PRESS B',machine.status!=='broken');
+ drawMachine(625,350,62,72,'ROBOT B',machine.status!=='broken');
+ drawMachine(765,350,62,72,'QC SCAN',true);
+ drawMachine(855,350,62,72,'GAUGE',true);
+ drawMachine(1225,350,62,72,'PACK 01',true);
+ drawMachine(1315,350,62,72,'PACK 02',true);
+ // Material racks / finished goods.
+ for(const z of [zones.raw,zones.finished,zones.ship]){
+   for(let yy=z.y+70;yy<z.y+z.h-55;yy+=42){
+     ctx.fillStyle='#92400e';ctx.fillRect(z.x+25,yy,52,22);
+     ctx.fillStyle='#fbbf24';ctx.fillRect(z.x+30,yy+5,42,12);
+   }
  }
- if(factoryLevel>=2){
-  ctx.fillStyle='#cbd5e1';ctx.fillRect(2175,95,370,1010);ctx.fillStyle='#94a3b8';ctx.fillRect(2175,95,8,1010);
-  ctx.fillStyle='#facc15';ctx.fillRect(2190,290,330,12);ctx.fillStyle='#111827';ctx.font='bold 10px Arial';for(let x=2195;x<2510;x+=24)ctx.fillText('⚠',x,301);
-  ctx.fillStyle='#334155';ctx.font='bold 18px Arial';ctx.fillText('🏭 KHU SẢN XUẤT MỞ RỘNG 2',2200,112);
-  ctx.fillStyle='#64748b';ctx.fillRect(2200,805,330,8);
- }
+ // Large observation aisle.
+ ctx.fillStyle='#94a3b822';ctx.fillRect(35,645,1710,95);
+ ctx.fillStyle='#475569';ctx.font='bold 12px Arial';ctx.fillText('LỐI QUẢN LÝ / XE NÂNG  ·  QUAN SÁT TOÀN BỘ DÂY CHUYỀN',55,675);
+ // Safety lights at each room.
+ for(const x of centers){ctx.fillStyle='#111827';ctx.fillRect(x-7,280,14,35);ctx.fillStyle='#ef4444';ctx.fillRect(x-4,284,8,7);ctx.fillStyle='#facc15';ctx.fillRect(x-4,294,8,7);ctx.fillStyle='#22c55e';ctx.fillRect(x-4,304,8,7)}
  ctx.restore();
 }
-function drawFactoryArchitecture(){ctx.save();for(const o of obstacles){ctx.fillStyle='#64748b';ctx.fillRect(o.x,o.y, o.w, 12);for(let wx=o.x+25;wx<o.x+o.w-20;wx+=55){ctx.fillStyle='#93c5fd66';ctx.fillRect(wx,o.y+18,34,28);ctx.strokeStyle='#475569';ctx.strokeRect(wx,o.y+18,34,28)}}ctx.fillStyle='#111827';ctx.font='bold 13px Arial';ctx.textAlign='left';ctx.fillText('KHO NGUYÊN LIỆU',80,130);ctx.fillText('XƯỞNG LẮP RÁP · LINE A',730,315);ctx.fillText('XƯỞNG LẮP RÁP · LINE B',1090,315);ctx.fillText('KHU QC & ĐÓNG GÓI',1390,130);for(const [x,y,w,h] of [[60,115,250,14],[710,315,285,14],[1070,315,285,14],[1390,115,260,14]]){ctx.fillStyle='#facc15';ctx.fillRect(x,y,w,h);ctx.fillStyle='#111827';ctx.font='9px Arial';for(let xx=x;xx<x+w;xx+=22)ctx.fillText('⚠',xx+4,y+11)}ctx.restore()}function drawLogisticsOverlay(){
- const pts=[[305,202],[735,418],[970,587],[1400,202],[1635,587],[305,927]];
- ctx.save();ctx.setLineDash([8,8]);ctx.lineWidth=4;ctx.strokeStyle='#0ea5e9aa';ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.setLineDash([]);
- ctx.fillStyle='#0f172a';ctx.font='bold 10px Arial';['KHO','A','B','QC','PACK','SHIP'].forEach((t,i)=>{ctx.fillStyle='#0f172acc';ctx.fillRect(pts[i][0]-16,pts[i][1]-25,32,16);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.fillText(t,pts[i][0],pts[i][1]-13)});ctx.restore();
-}function draw(){ctx.clearRect(0,0,W,H);ctx.save();ctx.scale(zoom,zoom);ctx.translate(-cam.x,-cam.y);ctx.fillStyle='#dbe4ea';ctx.fillRect(0,0,WORLD.w,WORLD.h);ctx.strokeStyle='#c4ced6';for(let i=0;i<=WORLD.w;i+=48){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,WORLD.h);ctx.stroke()}for(let i=0;i<=WORLD.h;i+=48){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(WORLD.w,i);ctx.stroke()}ctx.fillStyle='#64748b';ctx.fillRect(28,28,WORLD.w-56,22);ctx.fillRect(28,28,22,WORLD.h-56);ctx.fillRect(WORLD.w-50,28,22,WORLD.h-56);ctx.fillRect(28,WORLD.h-50,WORLD.w-56,22);ctx.fillStyle='#0f172a';ctx.font='bold 19px Arial';ctx.fillText('🏭 NHÀ MÁY — NGÀY '+day,68,82);ctx.fillStyle='#475569';ctx.font='11px Arial';ctx.fillText('KHU VỰC SẢN XUẤT · KHO · KỸ THUẬT · ĐÓNG GÓI',68,98);
+function drawFactoryArchitecture(){
+ ctx.save();
+ // Spacious independent rooms with clear walls, doors and room headers.
+ for(const o of obstacles){
+   ctx.fillStyle='#e2e8f0';ctx.fillRect(o.x,o.y,o.w,o.h);
+   ctx.strokeStyle='#64748b';ctx.lineWidth=7;ctx.strokeRect(o.x,o.y,o.w,o.h);
+   ctx.strokeStyle='#cbd5e1';ctx.lineWidth=2;ctx.strokeRect(o.x+10,o.y+10,o.w-20,o.h-20);
+   ctx.fillStyle='#0f172acc';ctx.fillRect(o.x+10,o.y+10,o.w-20,34);
+   ctx.fillStyle='#f8fafc';ctx.font='bold 12px Arial';ctx.textAlign='center';ctx.fillText(o.label,o.x+o.w/2,o.y+32);
+   // workstation floor guides
+   ctx.strokeStyle='#cbd5e188';ctx.lineWidth=2;
+   for(let gx=o.x+25;gx<o.x+o.w-20;gx+=55){ctx.beginPath();ctx.moveTo(gx,o.y+60);ctx.lineTo(gx,o.y+o.h-25);ctx.stroke()}
+ }
+ ctx.textAlign='left';
+ ctx.fillStyle='#334155';ctx.font='bold 13px Arial';ctx.fillText('KHU SẢN XUẤT — 7 PHÒNG TÁCH BIỆT · DỄ QUAN SÁT',55,155);
+ ctx.fillStyle='#64748b';ctx.font='11px Arial';ctx.fillText('Mỗi công đoạn có không gian riêng, lối vào riêng và vị trí bot cố định.',55,175);
+ ctx.restore();
+}
+function drawLogisticsOverlay(){
+ ctx.save();ctx.setLineDash([7,7]);ctx.lineWidth=3;ctx.strokeStyle='#0ea5e988';ctx.beginPath();ctx.moveTo(145,450);ctx.lineTo(1580,450);ctx.stroke();ctx.setLineDash([]);
+ ctx.fillStyle='#0f172acc';ctx.font='bold 10px Arial';ctx.textAlign='center';
+ ['KHO','A','B','QC','FG','PACK','SHIP'].forEach((t,i)=>{const x=[145,375,605,835,1065,1295,1580][i];ctx.fillRect(x-18,475,36,16);ctx.fillStyle='#fff';ctx.fillText(t,x,487);ctx.fillStyle='#0f172acc'});
+ ctx.restore();
+}
+function draw(){ctx.clearRect(0,0,W,H);ctx.save();ctx.scale(zoom,zoom);ctx.translate(-cam.x,-cam.y);ctx.fillStyle='#dbe4ea';ctx.fillRect(0,0,WORLD.w,WORLD.h);ctx.strokeStyle='#c4ced6';for(let i=0;i<=WORLD.w;i+=48){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,WORLD.h);ctx.stroke()}for(let i=0;i<=WORLD.h;i+=48){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(WORLD.w,i);ctx.stroke()}ctx.fillStyle='#64748b';ctx.fillRect(28,28,WORLD.w-56,22);ctx.fillRect(28,28,22,WORLD.h-56);ctx.fillRect(WORLD.w-50,28,22,WORLD.h-56);ctx.fillRect(28,WORLD.h-50,WORLD.w-56,22);ctx.fillStyle='#0f172a';ctx.font='bold 19px Arial';ctx.fillText('🏭 NHÀ MÁY — NGÀY '+day,68,82);ctx.fillStyle='#475569';ctx.font='11px Arial';ctx.fillText('KHU VỰC SẢN XUẤT · KHO · KỸ THUẬT · ĐÓNG GÓI',68,98);
 drawProfessionalFlow();drawFactoryDetails();drawFactoryArchitecture();drawExpansionDetails();drawLogisticsOverlay();
 // khung tường và sàn từng phòng
 obstacles.forEach(o=>{ctx.fillStyle='#94a3b833';ctx.fillRect(o.x,o.y,o.w,o.h);ctx.strokeStyle='#334155';ctx.lineWidth=8;ctx.strokeRect(o.x,o.y,o.w,o.h);ctx.strokeStyle='#cbd5e1';ctx.lineWidth=2;ctx.strokeRect(o.x+8,o.y+8,o.w-16,o.h-16);ctx.fillStyle='#64748b';ctx.font='bold 11px Arial';ctx.fillText(o.label,o.x+14,o.y+22)});
-// máy móc, băng tải, tủ điện, kệ công nghiệp
-drawMachine(755,365,72,82,'PRESS A',machine.status!=='broken');drawMachine(845,365,72,82,'ROBOT A',machine.status!=='broken');
-drawMachine(755,535,72,82,'PRESS B',machine.status!=='broken');drawMachine(845,535,72,82,'ROBOT B',machine.status!=='broken');
-drawMachine(1420,165,80,55,'QC SCAN',true);drawMachine(1520,165,80,55,'GAUGE',true);
-drawConveyor(725,455,210,18);drawConveyor(725,625,210,18);drawConveyor(1085,455,210,18);drawConveyor(1085,625,210,18);ctx.save();const rr=[{x:305,y:202,tx:735,ty:418},{x:970,y:418,tx:735,ty:587},{x:970,y:587,tx:1400,ty:202},{x:1635,y:202,tx:1635,ty:418},{x:1635,y:485,tx:1635,ty:587},{x:1400,y:587,tx:305,ty:927}];for(const it of conveyorItems){const r=rr[it.route];if(!r)continue;const xx=r.x+(r.tx-r.x)*it.t,yy=r.y+(r.ty-r.y)*it.t;ctx.save();ctx.translate(xx,yy);ctx.fillStyle=it.status==='WAITING'?'#ef4444':it.kind==='QC_OK'?'#22c55e':it.kind==='PACK'?'#60a5fa':'#f59e0b';ctx.fillRect(-9,-9,18,18);ctx.fillStyle='#111827';ctx.fillRect(-4,-4,8,8);ctx.strokeStyle='#f8fafc99';ctx.strokeRect(-9,-9,18,18);ctx.restore()}ctx.restore();
+// máy móc, băng tải và vật tư theo dây chuyền thẳng
+ctx.save();
+const rr=[
+{x:250,y:450,tx:270,y:450},{x:480,y:450,tx:500,y:450},{x:710,y:450,tx:730,y:450},
+{x:940,y:450,tx:960,y:450},{x:1170,y:450,tx:1190,y:450},{x:1400,y:450,tx:1420,y:450}
+];
+for(const it of conveyorItems){
+ const r=rr[it.route];if(!r)continue;
+ const xx=r.x+(r.tx-r.x)*it.t,yy=r.y+(r.ty-r.y)*it.t;
+ ctx.fillStyle=it.status==='WAITING'?'#ef4444':it.kind==='QC_OK'?'#22c55e':it.kind==='PACK'?'#60a5fa':'#f59e0b';
+ ctx.fillRect(xx-9,yy-9,18,18);ctx.fillStyle='#111827';ctx.fillRect(xx-4,yy-4,8,8);
+}
+ctx.restore();
 for(const z of [zones.a1,zones.a2,zones.pack]){for(let xx=z.x+22;xx<z.x+z.w-20;xx+=48){ctx.fillStyle='#475569';ctx.fillRect(xx,z.y+58,30,22);ctx.fillStyle='#94a3b8';ctx.fillRect(xx+5,z.y+63,20,12)}}
 for(const z of [zones.raw,zones.finished,zones.ship]){for(let yy=z.y+48;yy<z.y+z.h-15;yy+=28){ctx.fillStyle='#92400e';ctx.fillRect(z.x+22,yy,42,18);ctx.fillStyle='#fbbf24';ctx.fillRect(z.x+26,yy+4,34,10)}}
 box(zones.machine,'🛠️ BẢO TRÌ MÁY','E: kiểm tra / sửa máy','#475569');box(zones.raw,'📦 KHO NGUYÊN LIỆU','E: nhận A/B/C','#94a3b8');box(zones.a1,'🔧 LẮP RÁP 1','E: A + B → BC1','#64748b');box(zones.a2,'⚙️ LẮP RÁP 2','E: BC1 + C → BC2','#78716c');box(zones.qc,'🧪 QC','E: kiểm tra chất lượng','#a3a3a3');box(zones.finished,'🏬 KHO THÀNH PHẨM','E: tập kết hàng đạt','#7c8b99');box(zones.pack,'📦 ĐÓNG GÓI','E: đóng kiện','#8b8178');box(zones.ship,'🚚 KHO VẬN','E: xuất hàng','#60a5fa');box(zones.break,'☕ PHÒNG NGHỈ','E: hồi năng lượng','#a8a29e');box(zones.canteen,'🍜 CĂNG-TIN','E: ăn cơm','#fbbf24');box(zones.office,'👨‍💼 VĂN PHÒNG','E: gặp quản lý','#f97316');doors.forEach(d=>{ctx.save();const open=d.open;ctx.fillStyle='#0f172a';ctx.fillRect(d.x-8,d.y-8,d.w+16,d.h+16);ctx.strokeStyle='#64748b';ctx.lineWidth=3;ctx.strokeRect(d.x-4,d.y-4,d.w+8,d.h+8);if(open){ctx.fillStyle='#22c55e33';ctx.fillRect(d.x,d.y,d.w,d.h);ctx.strokeStyle='#22c55e';ctx.lineWidth=2;ctx.strokeRect(d.x,d.y,d.w,d.h);ctx.fillStyle='#dcfce7';ctx.font='bold 9px Arial';ctx.textAlign='center';ctx.fillText('CỬA MỞ',d.x+d.w/2,d.y+15)}else{ctx.fillStyle='#475569';ctx.fillRect(d.x,d.y,d.w,d.h);ctx.fillStyle='#64748b';ctx.fillRect(d.x+4,d.y+4,d.w-8,d.h-8);ctx.strokeStyle='#facc15';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(d.x+10,d.y+5);ctx.lineTo(d.x+10,d.y+d.h-5);ctx.moveTo(d.x+d.w-10,d.y+5);ctx.lineTo(d.x+d.w-10,d.y+d.h-5);ctx.stroke();ctx.fillStyle='#fef3c7';ctx.font='bold 9px Arial';ctx.textAlign='center';ctx.fillText('CỬA ĐÓNG',d.x+d.w/2,d.y+15)}ctx.fillStyle='#0f172a';ctx.font='bold 8px Arial';ctx.textAlign='center';ctx.fillText(d.label,d.x+d.w/2,d.y+35);ctx.restore()});npcs.forEach(npcDraw);
