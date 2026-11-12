@@ -259,19 +259,19 @@ function updateBotFactory(dt){
  if(!run||shiftEnded)return;
  const t=botFactory.timers;
  for(const k of Object.keys(t))t[k]+=dt;
- // Mai: supermarket-style material replenishment for the line.
+ // Mai: bổ sung vật tư tự động.
  if(t.raw>7){t.raw=0;inv.a=Math.min(20,inv.a+2);inv.b=Math.min(20,inv.b+2);inv.c=Math.min(20,inv.c+1);botFactory.raw++;ambientOutput=Math.max(ambientOutput,1)}
- // Tuấn: A+B -> subassembly 1
+ // Tuấn: A+B -> cụm 1.
  if(t.a1>lineMetrics.A.ct&&lineControl.A&&machine.status==='ok'&&inv.a>=1&&inv.b>=1){t.a1=0;inv.a--;inv.b--;inv.s1++;botFactory.a1++;lineMetrics.A.produced++;machineWork(3);spawnConveyor(0,'RAW→A1')}
- // Khoa: subassembly 1 + C -> subassembly 2
+ // Khoa: cụm 1+C -> cụm 2.
  if(t.a2>lineMetrics.B.ct&&lineControl.B&&machine.status==='ok'&&inv.s1>=1&&inv.c>=1){t.a2=0;inv.s1--;inv.c--;inv.s2++;botFactory.a2++;lineMetrics.B.produced++;machineWork(3);spawnConveyor(1,'A1→A2')}
- // Lan: QC with a small defect probability.
+ // Lan: QC.
  if(t.qc>lineMetrics.QC.ct&&lineControl.QC&&inv.s2>=1){t.qc=0;inv.s2--;botFactory.qc++;lineMetrics.QC.produced++;if(Math.random()<.08){bad++;botFactory.defects++;inv.s1++;}else{ok++;inv.q++;ambientQC++;spawnConveyor(2,'A2→QC')}}
- // Vy: pack passed goods.
+ // Vy: đóng gói hàng đạt.
  if(t.pack>lineMetrics.PACK.ct&&lineControl.QC&&inv.q>=1){t.pack=0;inv.q--;pack++;spawnConveyor(4,'QC→PACK');botFactory.pack++}
- // Phúc: ship packed goods.
+ // Phúc: xuất hàng.
  if(t.ship>lineMetrics.SHIP.ct&&lineControl.Ship&&pack>shipped){t.ship=0;shipped++;botFactory.ship++;lineMetrics.SHIP.produced++;botFactory.completed++;spawnConveyor(5,'PACK→SHIP');ambientShip++}
-}
+
  lineMetrics.A.active=lineControl.A&&machine.status==='ok'?1:0;
  lineMetrics.B.active=lineControl.B&&machine.status==='ok'?1:0;
  lineMetrics.QC.active=lineControl.QC?1:0;
@@ -285,7 +285,7 @@ function updateBotFactory(dt){
  if(!lineMetrics.A.active)lineMetrics.A.downtime+=dt/60;
  if(!lineMetrics.B.active)lineMetrics.B.downtime+=dt/60;
  managerAndon();
-
+}
 function updateNPCs(dt){
  if(!run||shiftEnded)return;
  factoryPulse+=dt;
