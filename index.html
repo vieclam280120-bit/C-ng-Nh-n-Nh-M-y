@@ -1,53 +1,63 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Công Nhân Nhà Máy — 0.2</title>
+<title>Công Nhân Nhà Máy — 0.3</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0f172a;color:#f8fafc;font-family:Arial,sans-serif;overflow:hidden}
-#hud{height:74px;background:#111827;border-bottom:2px solid #334155;display:flex;gap:18px;align-items:center;padding:8px 16px;position:relative;z-index:5;flex-wrap:wrap}
-.stat{min-width:105px}.label{font-size:11px;color:#94a3b8}.value{font-weight:700;font-size:18px}#game{display:block;width:100vw;height:calc(100vh - 74px);background:#cbd5e1}
-.panel{position:absolute;background:#0f172aee;border:1px solid #475569;border-radius:12px;padding:14px;z-index:4}.mission{right:16px;top:90px;width:300px}.inv{left:16px;top:90px;width:245px}.help{left:16px;bottom:16px;font-size:13px}.bar{height:9px;background:#334155;border-radius:9px;overflow:hidden}.fill{height:100%;background:#22c55e;width:0}.toast{position:absolute;left:50%;top:88px;transform:translateX(-50%);background:#16a34a;padding:10px 18px;border-radius:20px;opacity:0;z-index:10;font-weight:700}
-#overlay{position:absolute;inset:74px 0 0;background:#020617dd;display:flex;align-items:center;justify-content:center;z-index:20}.card{max-width:560px;background:#0f172a;border:1px solid #475569;border-radius:18px;padding:28px;text-align:center}button{border:0;border-radius:10px;padding:11px 17px;background:#2563eb;color:white;font-weight:700;cursor:pointer}
-.modal{position:absolute;inset:74px 0 0;background:#020617cc;display:none;align-items:center;justify-content:center;z-index:15}.modal .card{width:min(520px,92vw)}
-.good{color:#86efac}.bad{color:#fca5a5}
+*{box-sizing:border-box}body{margin:0;background:#0b1120;color:#f8fafc;font-family:Arial,sans-serif;overflow:hidden}
+#hud{height:76px;background:#111827;border-bottom:2px solid #334155;display:flex;gap:14px;align-items:center;padding:7px 14px;position:relative;z-index:5;flex-wrap:wrap}.stat{min-width:92px}.label{font-size:10px;color:#94a3b8}.value{font-weight:700;font-size:17px}
+#game{display:block;width:100vw;height:calc(100vh - 76px);background:#cbd5e1}.panel{position:absolute;background:#0f172aee;border:1px solid #475569;border-radius:12px;padding:12px;z-index:4}.mission{right:14px;top:90px;width:300px}.inv{left:14px;top:90px;width:245px}.help{left:14px;bottom:14px;font-size:12px}.bar{height:8px;background:#334155;border-radius:8px;overflow:hidden}.fill{height:100%;background:#22c55e;width:0}.toast{position:absolute;left:50%;top:88px;transform:translateX(-50%);background:#16a34a;padding:9px 17px;border-radius:20px;opacity:0;z-index:30;font-weight:700}
+.overlay,.modal{position:absolute;inset:76px 0 0;background:#020617dd;display:flex;align-items:center;justify-content:center;z-index:20}.modal{display:none;background:#020617cc;z-index:25}.card{width:min(600px,92vw);background:#0f172a;border:1px solid #475569;border-radius:18px;padding:26px;text-align:center}button{border:0;border-radius:10px;padding:10px 15px;background:#2563eb;color:white;font-weight:700;cursor:pointer;margin:4px}button.alt{background:#475569}.good{color:#86efac}.bad{color:#fca5a5}.row{display:flex;justify-content:space-between;gap:10px}.small{font-size:12px;color:#94a3b8}.tag{display:inline-block;padding:3px 7px;border-radius:7px;background:#334155;font-size:11px}
 </style></head><body>
 <div id="hud">
 <div class="stat"><div class="label">CÔNG NHÂN</div><div class="value">Nguyễn Minh</div></div>
 <div class="stat"><div class="label">CẤP ĐỘ</div><div class="value">Lv.<span id="lv">1</span></div></div>
 <div class="stat"><div class="label">💰 TIỀN</div><div class="value" id="money">0đ</div></div>
-<div class="stat"><div class="label">⭐ EXP</div><div class="value"><span id="xp">0</span>/100</div></div>
+<div class="stat"><div class="label">⭐ EXP</div><div class="value"><span id="xp">0</span>/<span id="need">100</span></div></div>
 <div class="stat"><div class="label">📊 KPI</div><div class="value"><span id="kpi">100</span>%</div></div>
 <div class="stat"><div class="label">🏭 CA</div><div class="value" id="shift">08:00</div></div>
+<div class="stat"><div class="label">💼 CHỨC VỤ</div><div class="value" id="job">Công nhân mới</div></div>
 </div>
 <canvas id="game"></canvas>
-<div class="panel inv"><b>📦 KHO NGUYÊN LIỆU</b><hr>
-Linh kiện A: <b id="a">0</b><br>Linh kiện B: <b id="b">0</b><br>Vỏ sản phẩm: <b id="c">0</b><br><small style="color:#94a3b8">Đến kho và nhấn E để nhận vật tư.</small></div>
-<div class="panel mission"><b>📋 CA LÀM 0.2</b><p>Lắp ráp: <b><span id="done">0</span>/10</b></p><div class="bar"><div class="fill" id="bar"></div></div><p>Đã đạt: <span id="ok">0</span> sản phẩm tốt<br>Sản phẩm lỗi: <span id="bad">0</span></p><small>Quy trình: KHO → LẮP RÁP → QC → hoàn thành.</small></div>
-<div class="panel help"><b>WASD / ↑↓←→</b> di chuyển · <b>E</b> tương tác · Nhấn E tại khu vực phù hợp.</div>
+<div class="panel inv"><b>📦 KHO CÁ NHÂN</b><hr>
+Linh kiện A: <b id="a">0</b><br>Linh kiện B: <b id="b">0</b><br>Vỏ: <b id="c">0</b><br>SP chờ QC: <b id="q">0</b><br>SP đạt: <b id="ok">0</b><br>SP lỗi: <b id="bad">0</b><br>Đã đóng gói: <b id="pack">0</b><hr><span class="small">Quy trình: Kho → Lắp ráp → QC → Đóng gói → Xuất hàng.</span></div>
+<div class="panel mission"><b>📋 KPI CA LÀM 0.3</b><p>Lô hàng: <b><span id="shipped">0</span>/10</b></p><div class="bar"><div class="fill" id="bar"></div></div><p>Chất lượng: <b id="quality">100%</b><br>Thu nhập ca: <b id="shiftMoney">0đ</b></p><span class="tag" id="status">Đang chờ</span><p class="small">Hoàn thành 10 sản phẩm xuất hàng để nhận thưởng ca.</p></div>
+<div class="panel help"><b>WASD / ↑↓←→</b> di chuyển · <b>E</b> tương tác · <b>ESC</b> đóng bảng · Đi gần khu vực để xem thao tác.</div>
 <div class="toast" id="toast"></div>
-<div class="modal" id="modal"><div class="card"><h2>🔧 Mini-game lắp ráp</h2><p>Chọn thao tác đúng để tăng chất lượng sản phẩm.</p><button onclick="assemble('tight')">🔩 Siết đúng lực</button> <button onclick="assemble('fast')">⚡ Làm thật nhanh</button><p id="result"></p></div></div>
-<div id="overlay"><div class="card"><h1>🏭 Công Nhân Nhà Máy</h1><p>Prototype 0.2 — Nguyên liệu · Lắp ráp · Sản phẩm lỗi · QC · KPI</p><p style="color:#cbd5e1">Nhận vật tư ở kho, lắp ráp rồi đưa sản phẩm qua QC.</p><button id="start">BẮT ĐẦU CA LÀM</button></div></div>
+
+<div class="modal" id="modal"><div class="card" id="modalCard"></div></div>
+<div class="overlay" id="overlay"><div class="card"><h1>🏭 Công Nhân Nhà Máy</h1><h3>Prototype 0.3 — Chuỗi sản xuất hoàn chỉnh</h3><p>Nhận vật tư → lắp ráp → QC → đóng gói → xuất hàng.</p><p class="small">Bản này thêm lương, chức vụ, thưởng ca, save tự động và nhiều khu vực.</p><button id="start">BẮT ĐẦU CA LÀM</button> <button class="alt" id="load">TẢI CA ĐÃ LƯU</button></div></div>
+
 <script>
-const c=document.getElementById('game'),x=c.getContext('2d');let W,H;
-function size(){W=c.width=innerWidth;H=c.height=innerHeight-74}addEventListener('resize',size);size();
-const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=1;if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(e.key.toLowerCase()))e.preventDefault();if(e.key.toLowerCase()==='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);
-const p={x:170,y:400,r:17,s:3.3};const zones={warehouse:{x:70,y:110,w:250,h:150},assembly:{x:W/2-110,y:260,w:220,h:150},qc:{x:W-330,y:110,w:250,h:150}};
-let run=0,inv={a:0,b:0,c:0},done=0,ok=0,bad=0,money=0,xp=0,lv=1,kpi=100,mins=480,product=null;
-function toast(t){const z=document.getElementById('toast');z.textContent=t;z.style.opacity=1;clearTimeout(window.tt);window.tt=setTimeout(()=>z.style.opacity=0,1300)}
-function center(z){return[Math.min(z.x+z.w/2,W-60),z.y+z.h/2]}
-function near(z,d=145){const[q,r]=center(z);return Math.hypot(p.x-q,p.y-r)<d}
-function interact(){if(!run)return;
- if(near(zones.warehouse)){inv={a:Math.min(inv.a+5,20),b:Math.min(inv.b+5,20),c:Math.min(inv.c+5,20)};toast('📦 Đã nhận 5 bộ nguyên liệu.');ui();return}
- if(near(zones.assembly)){if(inv.a<1||inv.b<1||inv.c<1){toast('❗ Thiếu nguyên liệu. Hãy tới kho.');return}document.getElementById('modal').style.display='flex';return}
- if(near(zones.qc)){if(product){qc();return}toast('ℹ️ Chưa có sản phẩm chờ QC.');}
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');let W,H;
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight-76;zones.warehouse.x=65;zones.assembly.x=W/2-115;zones.qc.x=W-330;zones.pack.x=W/2-115;zones.ship.x=65;zones.break.x=W/2-115;zones.break.y=470}addEventListener('resize',resize);
+const keys={};addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys[k]=1;if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(k==='e')interact();if(k==='escape')closeModal()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);
+const p={x:180,y:370,r:17,s:3.3};
+const zones={warehouse:{x:65,y:120,w:250,h:145},assembly:{x:0,y:275,w:230,h:150},qc:{x:0,y:120,w:250,h:145},pack:{x:0,y:300,w:230,h:135},ship:{x:65,y:485,w:250,h:120},break:{x:0,y:470,w:230,h:120}};
+let run=0,mins=480,inv={a:0,b:0,c:0,q:0},ok=0,bad=0,pack=0,shipped=0,money=0,shiftMoney=0,xp=0,lv=1,kpi=100,qualitySum=0,product=null,shiftEnded=false;
+function need(){return 100+(lv-1)*40}function job(){return lv>=5?'Tổ trưởng':lv>=3?'Công nhân lành nghề':'Công nhân mới'}
+function toast(t){const z=document.getElementById('toast');z.textContent=t;z.style.opacity=1;clearTimeout(window.tt);window.tt=setTimeout(()=>z.style.opacity=0,1500)}
+function center(z){return[z.x+z.w/2,z.y+z.h/2]}function near(z,d=135){const[q,r]=center(z);return Math.hypot(p.x-q,p.y-r)<d}
+function closeModal(){document.getElementById('modal').style.display='none'}
+function show(title,body,buttons=''){document.getElementById('modalCard').innerHTML='<h2>'+title+'</h2>'+body+buttons;document.getElementById('modal').style.display='flex'}
+function interact(){if(!run||shiftEnded)return;
+ if(near(zones.warehouse)){inv.a=Math.min(20,inv.a+5);inv.b=Math.min(20,inv.b+5);inv.c=Math.min(20,inv.c+5);toast('📦 Nhận 5 bộ nguyên liệu');ui();save();return}
+ if(near(zones.assembly)){if(inv.a<1||inv.b<1||inv.c<1){toast('❗ Thiếu vật tư — về kho nhận thêm');return}show('🔧 Trạm lắp ráp','<p>Chọn cách làm. Làm chuẩn chậm hơn nhưng chất lượng cao.</p>','<button onclick="assemble(\'standard\')">🔩 Làm chuẩn</button><button onclick="assemble(\'rush\')">⚡ Chạy nhanh</button>');return}
+ if(near(zones.qc)){if(inv.q){qc();return}toast('🧪 Không có sản phẩm chờ QC');return}
+ if(near(zones.pack)){if(ok>pack){pack++;money+=25;shiftMoney+=25;kpi=Math.min(100,kpi+1);toast('📦 Đóng gói +25đ');ui();save();}else toast('Chưa có sản phẩm đạt để đóng gói');return}
+ if(near(zones.ship)){if(pack>shipped){shipped++;money+=80;shiftMoney+=80;kpi=Math.min(100,kpi+2);xp+=10;toast('🚚 Xuất hàng +80đ +10 EXP');levelCheck();if(shipped>=10&&!shiftEnded)endShift();ui();save()}else toast('Chưa có kiện hàng để xuất');return}
+ if(near(zones.break)){kpi=Math.min(100,kpi+3);toast('☕ Nghỉ 1 chút — KPI hồi phục');ui();return}
 }
-function assemble(mode){document.getElementById('modal').style.display='none';inv.a--;inv.b--;inv.c--;done++;
- const quality=mode==='tight'?Math.random():Math.random()*1.25;
- product={quality};toast(quality>.22?'🔧 Đã lắp xong, đưa sang QC.':'⚠️ Có dấu hiệu lỗi — cần QC!');
- ui()}
-function qc(){const q=product.quality;product=null;if(q>.22){bad++;kpi=Math.max(0,kpi-4);money+=35;toast('❌ QC phát hiện sản phẩm lỗi! +35đ');}else{ok++;kpi=Math.min(100,kpi+1);money+=120;xp+=12;toast('✅ QC đạt! +120đ +12 EXP');if(xp>=100){xp-=100;lv++;toast('🎉 Lên cấp!')}}if(done>=10&&ok+bad>=10)toast(ok>=8?'🏆 Hoàn thành ca tốt!':'⚠️ Hoàn thành ca nhưng KPI thấp.');ui()}
-function ui(){for(const k of ['a','b','c'])document.getElementById(k).textContent=inv[k];document.getElementById('done').textContent=done;document.getElementById('ok').textContent=ok;document.getElementById('bad').textContent=bad;document.getElementById('money').textContent=money.toLocaleString('vi-VN')+'đ';document.getElementById('xp').textContent=xp;document.getElementById('lv').textContent=lv;document.getElementById('kpi').textContent=kpi;document.getElementById('bar').style.width=(done*10)+'%';document.getElementById('shift').textContent=String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0')}
-function box(z,title,sub,fill){x.fillStyle=fill;x.fillRect(z.x,z.y,z.w,z.h);x.fillStyle='#0f172a';x.font='bold 19px Arial';x.fillText(title,z.x+18,z.y+42);x.font='13px Arial';x.fillText(sub,z.x+18,z.y+72)}
-function draw(){x.clearRect(0,0,W,H);x.fillStyle='#cbd5e1';x.fillRect(0,0,W,H);x.strokeStyle='#b3c0cf';for(let i=0;i<W;i+=48){x.beginPath();x.moveTo(i,0);x.lineTo(i,H);x.stroke()}for(let i=0;i<H;i+=48){x.beginPath();x.moveTo(0,i);x.lineTo(W,i);x.stroke()}x.fillStyle='#64748b';x.fillRect(30,30,W-60,22);x.fillRect(30,30,22,H-60);x.fillRect(W-52,30,22,H-60);x.fillRect(30,H-52,W-60,22);x.fillStyle='#0f172a';x.font='bold 20px Arial';x.fillText('🏭 NHÀ MÁY SẢN XUẤT',70,88);box(zones.warehouse,'📦 KHO','Nhấn E nhận vật tư','#94a3b8');box(zones.assembly,'🔧 LẮP RÁP','Nhấn E bắt đầu mini-game','#64748b');box(zones.qc,'🧪 QC','Nhấn E kiểm tra','#a3a3a3');x.save();x.translate(p.x,p.y);x.fillStyle='#2563eb';x.beginPath();x.arc(0,0,p.r,0,7);x.fill();x.fillStyle='#facc15';x.fillRect(-14,-20,28,7);x.restore()}
-function update(dt){if(!run)return;let dx=0,dy=0;if(keys.w||keys.arrowup)dy--;if(keys.s||keys.arrowdown)dy++;if(keys.a||keys.arrowleft)dx--;if(keys.d||keys.arrowright)dx++;if(dx||dy){let l=Math.hypot(dx,dy);p.x+=dx/l*p.s*dt;p.y+=dy/l*p.s*dt}p.x=Math.max(60,Math.min(W-60,p.x));p.y=Math.max(100,Math.min(H-60,p.y))}
-let last=performance.now();function loop(t){let dt=Math.min(2,(t-last)/16.67);last=t;update(dt);draw();requestAnimationFrame(loop)}document.getElementById('start').onclick=()=>{run=1;document.getElementById('overlay').style.display='none';toast('👷 Ca làm bắt đầu!');ui()};ui();requestAnimationFrame(loop);
+function assemble(mode){closeModal();inv.a--;inv.b--;inv.c--;const quality=mode==='standard'?(0.84+Math.random()*0.16):(0.55+Math.random()*0.40);product={quality};inv.q++;toast(quality>=.8?'🔧 Lắp ráp đạt chuẩn, đưa sang QC':'⚠️ Sản phẩm có rủi ro lỗi');ui();save()}
+function qc(){const q=product.quality;product=null;inv.q--;qualitySum+=q;if(q>=.8){ok++;money+=120;shiftMoney+=120;xp+=12;kpi=Math.min(100,kpi+2);toast('✅ QC đạt! +120đ +12 EXP')}else{bad++;money+=35;shiftMoney+=35;kpi=Math.max(0,kpi-5);toast('❌ QC lỗi! +35đ, KPI -5')}levelCheck();ui();save()}
+function levelCheck(){while(xp>=need()){xp-=need();lv++;money+=300;shiftMoney+=300;toast('🎉 LÊN CẤP '+lv+' — thưởng 300đ!')}}
+function endShift(){shiftEnded=true;const bonus=kpi>=95?1000:kpi>=85?600:kpi>=70?300:0;money+=bonus;shiftMoney+=bonus;show('🏁 HOÀN THÀNH CA','<p>Đã xuất <b>'+shipped+'/10</b> sản phẩm.</p><p>KPI: <b>'+kpi+'%</b> · Sản phẩm tốt: <b>'+ok+'</b> · Lỗi: <b>'+bad+'</b></p><h3>💰 Thu nhập ca: '+shiftMoney.toLocaleString('vi-VN')+'đ</h3><p>🎁 Thưởng KPI: '+bonus.toLocaleString('vi-VN')+'đ</p>','<button onclick="newShift()">CA TIẾP THEO</button>');document.getElementById('status').textContent='Hoàn thành ca';save()}
+function newShift(){closeModal();mins=480;shiftEnded=false;shipped=0;pack=0;ok=0;bad=0;shiftMoney=0;kpi=100;qualitySum=0;product=null;inv.q=0;toast('👷 Ca mới bắt đầu!');ui();save()}
+function ui(){document.getElementById('a').textContent=inv.a;document.getElementById('b').textContent=inv.b;document.getElementById('c').textContent=inv.c;document.getElementById('q').textContent=inv.q;document.getElementById('ok').textContent=ok;document.getElementById('bad').textContent=bad;document.getElementById('pack').textContent=pack;document.getElementById('shipped').textContent=shipped;document.getElementById('money').textContent=money.toLocaleString('vi-VN')+'đ';document.getElementById('shiftMoney').textContent=shiftMoney.toLocaleString('vi-VN')+'đ';document.getElementById('xp').textContent=xp;document.getElementById('need').textContent=need();document.getElementById('lv').textContent=lv;document.getElementById('job').textContent=job();document.getElementById('kpi').textContent=kpi;document.getElementById('quality').textContent=(shipped?Math.round(Math.max(0,100-bad*8)) : 100)+'%';document.getElementById('bar').style.width=(shipped*10)+'%';document.getElementById('shift').textContent=String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0')}
+function save(){localStorage.setItem('factorySave',JSON.stringify({mins,inv,ok,bad,pack,shipped,money,shiftMoney,xp,lv,kpi}))}
+function load(){const s=localStorage.getItem('factorySave');if(!s){toast('Chưa có dữ liệu lưu');return}Object.assign(window,s?JSON.parse(s):{});const d=JSON.parse(s);mins=d.mins;inv=d.inv;ok=d.ok;bad=d.bad;pack=d.pack;shipped=d.shipped;money=d.money;shiftMoney=d.shiftMoney;xp=d.xp;lv=d.lv;kpi=d.kpi;run=1;document.getElementById('overlay').style.display='none';toast('💾 Đã tải ca đã lưu');ui()}
+function box(z,title,sub,fill){ctx.fillStyle=fill;ctx.fillRect(z.x,z.y,z.w,z.h);ctx.fillStyle='#0f172a';ctx.font='bold 18px Arial';ctx.fillText(title,z.x+15,z.y+38);ctx.font='12px Arial';ctx.fillText(sub,z.x+15,z.y+67)}
+function draw(){ctx.clearRect(0,0,W,H);ctx.fillStyle='#cbd5e1';ctx.fillRect(0,0,W,H);ctx.strokeStyle='#b6c2cf';for(let i=0;i<W;i+=48){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,H);ctx.stroke()}for(let i=0;i<H;i+=48){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(W,i);ctx.stroke()}ctx.fillStyle='#64748b';ctx.fillRect(30,30,W-60,22);ctx.fillRect(30,30,22,H-60);ctx.fillRect(W-52,30,22,H-60);ctx.fillRect(30,H-52,W-60,22);ctx.fillStyle='#0f172a';ctx.font='bold 20px Arial';ctx.fillText('🏭 NHÀ MÁY — DÂY CHUYỀN SẢN XUẤT',70,88);box(zones.warehouse,'📦 KHO','E: nhận vật tư','#94a3b8');box(zones.qc,'🧪 QC','E: kiểm tra','#a3a3a3');box(zones.assembly,'🔧 LẮP RÁP','E: sản xuất','#64748b');box(zones.pack,'📦 ĐÓNG GÓI','E: đóng kiện','#78716c');box(zones.ship,'🚚 XUẤT HÀNG','E: giao kho vận','#60a5fa');box(zones.break,'☕ PHÒNG NGHỈ','E: hồi KPI','#a8a29e');ctx.save();ctx.translate(p.x,p.y);ctx.fillStyle='#2563eb';ctx.beginPath();ctx.arc(0,0,p.r,0,Math.PI*2);ctx.fill();ctx.fillStyle='#facc15';ctx.fillRect(-14,-20,28,7);ctx.fillStyle='#fff';ctx.font='11px Arial';ctx.fillText('MINH',-15,34);ctx.restore()}
+function update(dt){if(!run||shiftEnded)return;let dx=0,dy=0;if(keys.w||keys.arrowup)dy--;if(keys.s||keys.arrowdown)dy++;if(keys.a||keys.arrowleft)dx--;if(keys.d||keys.arrowright)dx++;if(dx||dy){let l=Math.hypot(dx,dy);p.x+=dx/l*p.s*dt;p.y+=dy/l*p.s*dt}p.x=Math.max(60,Math.min(W-60,p.x));p.y=Math.max(100,Math.min(H-60,p.y));mins+=dt*.18;if(mins>=1020){mins=1020;endShift()}ui()}
+let last=performance.now();function loop(t){const dt=Math.min(2,(t-last)/16.67);last=t;update(dt);draw();requestAnimationFrame(loop)}
+document.getElementById('start').onclick=()=>{run=1;document.getElementById('overlay').style.display='none';toast('👷 Ca làm bắt đầu!');ui();save()};
+document.getElementById('load').onclick=load;resize();ui();requestAnimationFrame(loop);
 </script></body></html>
