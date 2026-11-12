@@ -738,7 +738,7 @@ function v44Open(){document.getElementById('v44Ops').style.display='flex';v44Tab
 function closeV44(){document.getElementById('v44Ops').style.display='none'}
 function v44Tab(t){v44TabName=t;v44Render()}
 function v44Status(v){return v>0?'<span class="v44ok">● RUN</span>':'<span class="v44bad">● STOP</span>'}
-function v44Action(a){
+function v44Train(i){v44State.people.trained=i;v44Action('train')}\nfunction v44Action(a){
  if(a==='plan'){v44State.plan.target=Math.max(8,orderTarget);v44State.plan.priority='ON TIME';toast('🎯 Đã khóa mục tiêu ca: '+v44State.plan.target+' kiện')}
  if(a==='balance'){lineMetrics.A.ct=Math.max(4,lineMetrics.A.ct-.7);lineMetrics.B.ct=Math.max(4,lineMetrics.B.ct-.7);v44State.plan.priority='BALANCED';managerStats.costs+=120;toast('⚖️ Đã cân bằng công suất 2 line · +120đ chi phí')}
  if(a==='expedite'){v44State.material.inTransit=4;v44State.material.eta=12;v44State.material.expedite++;managerStats.costs+=180;toast('🚚 Đã đặt chuyến vật tư khẩn · ETA 12s')}
