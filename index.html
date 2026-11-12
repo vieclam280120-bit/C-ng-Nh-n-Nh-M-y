@@ -374,7 +374,7 @@ function updateBotFactory(dt){
  const t=botFactory.timers;
  for(const k of Object.keys(t))t[k]+=dt;
  // Mai: bổ sung vật tư tự động.
- if(t.raw>7){t.raw=0;inv.a=Math.min(20,inv.a+2);inv.b=Math.min(20,inv.b+2);inv.c=Math.min(20,inv.c+1);botFactory.raw++;ambientOutput=Math.max(ambientOutput,1)}
+ if(t.raw>7){t.raw=0;botFactory.raw++;ambientOutput=Math.max(ambientOutput,1);v46Route()}
  // Tuấn: A+B -> cụm 1.
  if(t.a1>lineMetrics.A.ct&&lineControl.A&&machine.status==='ok'&&inv.a>=1&&inv.b>=1){t.a1=0;inv.a--;inv.b--;inv.s1++;botFactory.a1++;lineMetrics.A.produced++;machineWork(3);spawnConveyor(0,'RAW→A1')}
  // Khoa: cụm 1+C -> cụm 2.
