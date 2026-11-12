@@ -427,7 +427,7 @@ function machineReady(){if(machine.status==='broken'){toast('🛠️ Máy đang 
 function machineWork(w){machine.wear=Math.min(100,machine.wear+w);if(machine.wear>=100){machine.status='broken';toast('🚨 MÁY HỎNG! Dừng sản xuất và bảo trì')} }
 function spendEnergy(n){if(energy<n){toast('⚠️ Quá mệt! Hãy nghỉ hoặc ăn.');return false}energy-=n;return true}
 function stage(){if(inv.a<1||inv.b<1||inv.c<1)return'Nhận vật tư';if(inv.s1<1)return'Lắp ráp 1';if(inv.s2<1)return'Lắp ráp 2';if(inv.q<1&&ok===0)return'QC';if(ok>pack)return'Kho thành phẩm';if(pack>shipped)return'Đóng gói / Kho vận';return'Hoàn thành'}
-function start(){try{run=1;shiftStartedAt=Date.now();mins=480;shiftEnded=false;chainStage=0;chainStep=0;chainTotal=0;conveyorItems=[];quests=[];initContracts();initQuests();}catch(e){console.error('START_INIT_ERROR',e);quests=[];chainStage=0;chainStep=0;chainTotal=0;conveyorItems=[];}const ov=document.getElementById('overlay');if(ov)ov.style.display='none';toast('👷 Ca ngày '+day+' bắt đầu · 08:00');try{ui();save()}catch(e){console.error('START_UI_ERROR',e);toast('⚠️ Ca đã bắt đầu nhưng giao diện đang khởi tạo lại');}}window.startGame=start;
+function start(){try{run=1;shiftStartedAt=Date.now();mins=480;shiftEnded=false;chainStage=0;chainStep=0;chainTotal=0;conveyorItems=[];quests=[];initContracts();initQuests();}catch(e){console.error('START_INIT_ERROR',e);quests=[];chainStage=0;chainStep=0;chainTotal=0;conveyorItems=[];}const bs=document.getElementById('bootScreen');if(bs)bs.style.display='none';const ov=document.getElementById('overlay');if(ov)ov.style.display='none';toast('👷 Ca ngày '+day+' bắt đầu · 08:00');try{ui();save()}catch(e){console.error('START_UI_ERROR',e);toast('⚠️ Ca đã bắt đầu nhưng giao diện đang khởi tạo lại');}}window.startGame=start;
 
 let workTask=null,workPos=0,workNeed=0,workSeq=[],workBusy=false;
 function openWork(type){
@@ -855,7 +855,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeV44()});
 let runtimeFaultShown=false;function loop(t){if(!window.last)window.last=t;const dt=Math.min(2,Math.max(0,(t-window.last)/16.67));window.last=t;try{update(dt);draw();drawMiniMap()}catch(e){console.error('GAME_RUNTIME_ERROR',e);if(!runtimeFaultShown){runtimeFaultShown=true;toast('⚠️ Game tự bảo vệ: '+(e&&e.message?e.message:'lỗi runtime'));setTimeout(()=>runtimeFaultShown=false,5000)}}finally{requestAnimationFrame(loop)}}
 window.addEventListener('error',e=>{console.error(e.error||e.message);const z=document.getElementById('toast');if(z){z.textContent='⚠️ Game gặp lỗi: '+e.message;z.style.opacity=1}if(!run){document.getElementById('overlay').style.display='flex'}});
 window.addEventListener('blur',()=>{for(const k in keys)keys[k]=0});
-resize();refreshWalls();repositionNPC();updateZoomUI();initQuests();updateManagerUI();ui();requestAnimationFrame(loop);
+try{resize();refreshWalls()}catch(e){console.error("INIT_RESIZE",e)}try{updateZoomUI()}catch(e){console.error("INIT_ZOOM",e)}try{initQuests()}catch(e){console.error("INIT_QUESTS",e)}try{updateManagerUI()}catch(e){console.error("INIT_MANAGER",e)}try{ui()}catch(e){console.error("INIT_UI",e)}window.__factoryLoopStarted=true;requestAnimationFrame(loop);
 try{var bs=document.getElementById("bootScreen");if(bs)bs.style.display="none"}catch(e){}
 document.getElementById('miniMap').addEventListener('click',miniMapJump);
 </script><script>
@@ -873,6 +873,6 @@ document.getElementById('miniMap').addEventListener('click',miniMapJump);
       }catch(e){console.error('START_BUTTON_ERROR',e);}
     });
   }
-  var bb=document.getElementById("bootStart");if(bb)bb.addEventListener("click",function(){if(typeof window.startGame==="function")window.startGame();else{var m=document.getElementById("bootMsg");if(m)m.textContent="Đang khởi tạo, vui lòng thử lại...";}});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindStart);else bindStart();
+  var bb=document.getElementById("bootStart");if(bb)bb.addEventListener("click",function(){try{if(typeof window.startGame==="function")window.startGame();else{var m=document.getElementById("bootMsg");if(m)m.textContent="Game chưa khởi tạo xong.";return}if(!window.__factoryLoopStarted&&typeof window.loop==="function"){window.__factoryLoopStarted=true;requestAnimationFrame(window.loop)}}catch(e){console.error("BOOT_START_ERROR",e);var m=document.getElementById("bootMsg");if(m)m.textContent="Lỗi khởi động: "+(e.message||e)}});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindStart);else bindStart();
 })();
 </script></body></html>
