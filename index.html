@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Công Nhân Nhà Máy — 0.2</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0f172a;color:#f8fafc;font-family:Arial,sans-serif;overflow:hidden}
+#hud{height:74px;background:#111827;border-bottom:2px solid #334155;display:flex;gap:18px;align-items:center;padding:8px 16px;position:relative;z-index:5;flex-wrap:wrap}
+.stat{min-width:105px}.label{font-size:11px;color:#94a3b8}.value{font-weight:700;font-size:18px}#game{display:block;width:100vw;height:calc(100vh - 74px);background:#cbd5e1}
+.panel{position:absolute;background:#0f172aee;border:1px solid #475569;border-radius:12px;padding:14px;z-index:4}.mission{right:16px;top:90px;width:300px}.inv{left:16px;top:90px;width:245px}.help{left:16px;bottom:16px;font-size:13px}.bar{height:9px;background:#334155;border-radius:9px;overflow:hidden}.fill{height:100%;background:#22c55e;width:0}.toast{position:absolute;left:50%;top:88px;transform:translateX(-50%);background:#16a34a;padding:10px 18px;border-radius:20px;opacity:0;z-index:10;font-weight:700}
+#overlay{position:absolute;inset:74px 0 0;background:#020617dd;display:flex;align-items:center;justify-content:center;z-index:20}.card{max-width:560px;background:#0f172a;border:1px solid #475569;border-radius:18px;padding:28px;text-align:center}button{border:0;border-radius:10px;padding:11px 17px;background:#2563eb;color:white;font-weight:700;cursor:pointer}
+.modal{position:absolute;inset:74px 0 0;background:#020617cc;display:none;align-items:center;justify-content:center;z-index:15}.modal .card{width:min(520px,92vw)}
+.good{color:#86efac}.bad{color:#fca5a5}
+</style></head><body>
+<div id="hud">
+<div class="stat"><div class="label">CÔNG NHÂN</div><div class="value">Nguyễn Minh</div></div>
+<div class="stat"><div class="label">CẤP ĐỘ</div><div class="value">Lv.<span id="lv">1</span></div></div>
+<div class="stat"><div class="label">💰 TIỀN</div><div class="value" id="money">0đ</div></div>
+<div class="stat"><div class="label">⭐ EXP</div><div class="value"><span id="xp">0</span>/100</div></div>
+<div class="stat"><div class="label">📊 KPI</div><div class="value"><span id="kpi">100</span>%</div></div>
+<div class="stat"><div class="label">🏭 CA</div><div class="value" id="shift">08:00</div></div>
+</div>
+<canvas id="game"></canvas>
+<div class="panel inv"><b>📦 KHO NGUYÊN LIỆU</b><hr>
+Linh kiện A: <b id="a">0</b><br>Linh kiện B: <b id="b">0</b><br>Vỏ sản phẩm: <b id="c">0</b><br><small style="color:#94a3b8">Đến kho và nhấn E để nhận vật tư.</small></div>
+<div class="panel mission"><b>📋 CA LÀM 0.2</b><p>Lắp ráp: <b><span id="done">0</span>/10</b></p><div class="bar"><div class="fill" id="bar"></div></div><p>Đã đạt: <span id="ok">0</span> sản phẩm tốt<br>Sản phẩm lỗi: <span id="bad">0</span></p><small>Quy trình: KHO → LẮP RÁP → QC → hoàn thành.</small></div>
+<div class="panel help"><b>WASD / ↑↓←→</b> di chuyển · <b>E</b> tương tác · Nhấn E tại khu vực phù hợp.</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="card"><h2>🔧 Mini-game lắp ráp</h2><p>Chọn thao tác đúng để tăng chất lượng sản phẩm.</p><button onclick="assemble('tight')">🔩 Siết đúng lực</button> <button onclick="assemble('fast')">⚡ Làm thật nhanh</button><p id="result"></p></div></div>
+<div id="overlay"><div class="card"><h1>🏭 Công Nhân Nhà Máy</h1><p>Prototype 0.2 — Nguyên liệu · Lắp ráp · Sản phẩm lỗi · QC · KPI</p><p style="color:#cbd5e1">Nhận vật tư ở kho, lắp ráp rồi đưa sản phẩm qua QC.</p><button id="start">BẮT ĐẦU CA LÀM</button></div></div>
+<script>
+const c=document.getElementById('game'),x=c.getContext('2d');let W,H;
+function size(){W=c.width=innerWidth;H=c.height=innerHeight-74}addEventListener('resize',size);size();
+const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=1;if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(e.key.toLowerCase()))e.preventDefault();if(e.key.toLowerCase()==='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);
+const p={x:170,y:400,r:17,s:3.3};const zones={warehouse:{x:70,y:110,w:250,h:150},assembly:{x:W/2-110,y:260,w:220,h:150},qc:{x:W-330,y:110,w:250,h:150}};
+let run=0,inv={a:0,b:0,c:0},done=0,ok=0,bad=0,money=0,xp=0,lv=1,kpi=100,mins=480,product=null;
+function toast(t){const z=document.getElementById('toast');z.textContent=t;z.style.opacity=1;clearTimeout(window.tt);window.tt=setTimeout(()=>z.style.opacity=0,1300)}
+function center(z){return[Math.min(z.x+z.w/2,W-60),z.y+z.h/2]}
+function near(z,d=145){const[q,r]=center(z);return Math.hypot(p.x-q,p.y-r)<d}
+function interact(){if(!run)return;
+ if(near(zones.warehouse)){inv={a:Math.min(inv.a+5,20),b:Math.min(inv.b+5,20),c:Math.min(inv.c+5,20)};toast('📦 Đã nhận 5 bộ nguyên liệu.');ui();return}
+ if(near(zones.assembly)){if(inv.a<1||inv.b<1||inv.c<1){toast('❗ Thiếu nguyên liệu. Hãy tới kho.');return}document.getElementById('modal').style.display='flex';return}
+ if(near(zones.qc)){if(product){qc();return}toast('ℹ️ Chưa có sản phẩm chờ QC.');}
+}
+function assemble(mode){document.getElementById('modal').style.display='none';inv.a--;inv.b--;inv.c--;done++;
+ const quality=mode==='tight'?Math.random():Math.random()*1.25;
+ product={quality};toast(quality>.22?'🔧 Đã lắp xong, đưa sang QC.':'⚠️ Có dấu hiệu lỗi — cần QC!');
+ ui()}
+function qc(){const q=product.quality;product=null;if(q>.22){bad++;kpi=Math.max(0,kpi-4);money+=35;toast('❌ QC phát hiện sản phẩm lỗi! +35đ');}else{ok++;kpi=Math.min(100,kpi+1);money+=120;xp+=12;toast('✅ QC đạt! +120đ +12 EXP');if(xp>=100){xp-=100;lv++;toast('🎉 Lên cấp!')}}if(done>=10&&ok+bad>=10)toast(ok>=8?'🏆 Hoàn thành ca tốt!':'⚠️ Hoàn thành ca nhưng KPI thấp.');ui()}
+function ui(){for(const k of ['a','b','c'])document.getElementById(k).textContent=inv[k];document.getElementById('done').textContent=done;document.getElementById('ok').textContent=ok;document.getElementById('bad').textContent=bad;document.getElementById('money').textContent=money.toLocaleString('vi-VN')+'đ';document.getElementById('xp').textContent=xp;document.getElementById('lv').textContent=lv;document.getElementById('kpi').textContent=kpi;document.getElementById('bar').style.width=(done*10)+'%';document.getElementById('shift').textContent=String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0')}
+function box(z,title,sub,fill){x.fillStyle=fill;x.fillRect(z.x,z.y,z.w,z.h);x.fillStyle='#0f172a';x.font='bold 19px Arial';x.fillText(title,z.x+18,z.y+42);x.font='13px Arial';x.fillText(sub,z.x+18,z.y+72)}
+function draw(){x.clearRect(0,0,W,H);x.fillStyle='#cbd5e1';x.fillRect(0,0,W,H);x.strokeStyle='#b3c0cf';for(let i=0;i<W;i+=48){x.beginPath();x.moveTo(i,0);x.lineTo(i,H);x.stroke()}for(let i=0;i<H;i+=48){x.beginPath();x.moveTo(0,i);x.lineTo(W,i);x.stroke()}x.fillStyle='#64748b';x.fillRect(30,30,W-60,22);x.fillRect(30,30,22,H-60);x.fillRect(W-52,30,22,H-60);x.fillRect(30,H-52,W-60,22);x.fillStyle='#0f172a';x.font='bold 20px Arial';x.fillText('🏭 NHÀ MÁY SẢN XUẤT',70,88);box(zones.warehouse,'📦 KHO','Nhấn E nhận vật tư','#94a3b8');box(zones.assembly,'🔧 LẮP RÁP','Nhấn E bắt đầu mini-game','#64748b');box(zones.qc,'🧪 QC','Nhấn E kiểm tra','#a3a3a3');x.save();x.translate(p.x,p.y);x.fillStyle='#2563eb';x.beginPath();x.arc(0,0,p.r,0,7);x.fill();x.fillStyle='#facc15';x.fillRect(-14,-20,28,7);x.restore()}
+function update(dt){if(!run)return;let dx=0,dy=0;if(keys.w||keys.arrowup)dy--;if(keys.s||keys.arrowdown)dy++;if(keys.a||keys.arrowleft)dx--;if(keys.d||keys.arrowright)dx++;if(dx||dy){let l=Math.hypot(dx,dy);p.x+=dx/l*p.s*dt;p.y+=dy/l*p.s*dt}p.x=Math.max(60,Math.min(W-60,p.x));p.y=Math.max(100,Math.min(H-60,p.y))}
+let last=performance.now();function loop(t){let dt=Math.min(2,(t-last)/16.67);last=t;update(dt);draw();requestAnimationFrame(loop)}document.getElementById('start').onclick=()=>{run=1;document.getElementById('overlay').style.display='none';toast('👷 Ca làm bắt đầu!');ui()};ui();requestAnimationFrame(loop);
+</script></body></html>
