@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Công Nhân Nhà Máy — 0.4</title>
+<title>Công Nhân Nhà Máy — 0.4.1</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0b1120;color:#f8fafc;font-family:Arial,sans-serif;overflow:hidden}
 #hud{height:82px;background:#111827;border-bottom:2px solid #334155;display:flex;gap:12px;align-items:center;padding:7px 12px;position:relative;z-index:5;flex-wrap:wrap}.stat{min-width:82px}.label{font-size:10px;color:#94a3b8}.value{font-weight:700;font-size:16px}.warn{color:#fbbf24}.danger{color:#f87171}
@@ -25,12 +25,13 @@
 <div class="modal" id="modal"><div class="card" id="modalCard"></div></div>
 <div class="overlay" id="overlay"><div class="card"><h1>🏭 Công Nhân Nhà Máy</h1><h3>Prototype 0.4 — Nhân sự & đời sống</h3><p>Sản xuất, nhận nhiệm vụ, trò chuyện đồng nghiệp, quản lý năng lượng và tiền sinh hoạt.</p><p class="small">Bản này mở đầu phần RPG: NPC, nhiệm vụ phụ, ăn uống, năng lượng, quan hệ và lương.</p><button id="start">BẮT ĐẦU CA LÀM</button> <button class="alt" id="load">TẢI CA ĐÃ LƯU</button></div></div>
 <script>
-const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');let W,H;
+window.addEventListener('error',function(e){var o=document.getElementById('overlay');if(o){o.style.display='flex';var card=o.querySelector('.card');if(card)card.innerHTML='<h2>⚠️ Game gặp lỗi</h2><p>Hãy tải lại trang bằng <b>Ctrl + F5</b>.</p><p class="small">'+(e.message||'Lỗi JavaScript')+'</p><button onclick="location.reload(true)">TẢI LẠI</button>'}});
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');let W=window.innerWidth,H=window.innerHeight-82;
 const zones={warehouse:{x:65,y:120,w:250,h:145},assembly:{x:0,y:285,w:230,h:150},qc:{x:0,y:120,w:250,h:145},pack:{x:0,y:310,w:230,h:135},ship:{x:65,y:485,w:250,h:120},break:{x:0,y:470,w:230,h:120},canteen:{x:0,y:0,w:230,h:100},office:{x:0,y:0,w:230,h:100}};
 function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight-82;zones.warehouse.x=65;zones.assembly.x=W/2-115;zones.qc.x=W-330;zones.pack.x=W/2-115;zones.ship.x=65;zones.break.x=W/2-115;zones.break.y=Math.max(430,H-150);zones.canteen.x=W-300;zones.canteen.y=120;zones.office.x=W-300;zones.office.y=300}addEventListener('resize',resize);
 const keys={};addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys[k]=1;if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(k==='e')interact();if(k==='escape')closeModal()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);
 const p={x:180,y:370,r:17,s:3.3};
-const npcs=[{name:'Anh Hùng',role:'Tổ trưởng',x:W-185,y:360,rel:0,color:'#f59e0b',type:'boss'},{name:'Lan',role:'Đồng nghiệp QC',x:W-175,y:210,rel:0,color:'#ec4899',type:'qc'},{name:'Tuấn',role:'Đồng nghiệp lắp ráp',x:W/2+160,y:520,rel:0,color:'#22c55e',type:'friend'},{name:'Mai',role:'Nhân viên kho',x:360,y:190,rel:0,color:'#a78bfa',type:'store'}];
+const npcs=[{name:'Anh Hùng',role:'Tổ trưởng',x:0,y:360,rel:0,color:'#f59e0b',type:'boss'},{name:'Lan',role:'Đồng nghiệp QC',x:0,y:210,rel:0,color:'#ec4899',type:'qc'},{name:'Tuấn',role:'Đồng nghiệp lắp ráp',x:0,y:520,rel:0,color:'#22c55e',type:'friend'},{name:'Mai',role:'Nhân viên kho',x:360,y:190,rel:0,color:'#a78bfa',type:'store'}];
 function repositionNPC(){npcs[0].x=W-185;npcs[1].x=W-175;npcs[2].x=W/2+160;npcs[3].x=360}
 let run=0,mins=480,inv={a:0,b:0,c:0,q:0},ok=0,bad=0,pack=0,shipped=0,money=0,shiftMoney=0,xp=0,lv=1,kpi=100,product=null,shiftEnded=false,energy=100,hunger=100,sideDone=0,salaryDays=0,day=1,mealCount=0;
 let side={task:false,claimed:false};
